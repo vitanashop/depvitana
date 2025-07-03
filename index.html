@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    
+    <!-- Meta tags otimizadas para mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="msapplication-navbutton-color" content="#000000" />
+    <meta name="apple-mobile-web-app-title" content="Sistema Vitana" />
+    
+    <!-- Preload de fontes para melhor performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <title>Sistema de Gerenciamento de Depósito de Bebidas</title>
+    
+    <style>
+      /* Otimizações críticas para mobile */
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      
+      html {
+        /* Suporte para safe area em dispositivos com notch */
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #000000;
+        color: #ffffff;
+        overflow-x: hidden;
+        /* Prevenir bounce scroll no iOS */
+        overscroll-behavior: none;
+        /* Melhorar performance de scroll */
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      /* Evitar zoom em inputs no iOS */
+      @media screen and (-webkit-min-device-pixel-ratio: 0) {
+        input, select, textarea {
+          font-size: 16px !important;
+        }
+      }
+      
+      /* Melhorar touch targets */
+      button, input[type="button"], input[type="submit"], .touch-target {
+        min-height: 44px;
+        min-width: 44px;
+        touch-action: manipulation;
+      }
+      
+      /* Esconder scrollbars no mobile */
+      @media (max-width: 768px) {
+        ::-webkit-scrollbar {
+          width: 2px;
+          height: 2px;
+        }
+        ::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: rgba(234, 179, 8, 0.3);
+          border-radius: 2px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: rgba(234, 179, 8, 0.5);
+        }
+      }
+      
+      /* Loading screen otimizado */
+      #loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.3s ease-out;
+      }
+      
+      #loading-screen.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      .loading-content {
+        text-align: center;
+        padding: 2rem;
+      }
+      
+      .loading-logo {
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        animation: pulse 2s infinite;
+        box-shadow: 0 10px 25px rgba(251, 191, 36, 0.25);
+      }
+      
+      .loading-text {
+        color: #ffffff;
+        font-size: 1.125rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+      
+      .loading-subtext {
+        color: #9ca3af;
+        font-size: 0.875rem;
+      }
+      
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 0.8;
+        }
+      }
+      
+      /* Orientação landscape compacta */
+      @media screen and (max-height: 500px) and (orientation: landscape) {
+        .loading-content {
+          padding: 1rem;
+        }
+        
+        .loading-logo {
+          width: 48px;
+          height: 48px;
+          margin-bottom: 0.5rem;
+        }
+        
+        .loading-text {
+          font-size: 1rem;
+        }
+        
+        .loading-subtext {
+          font-size: 0.75rem;
+        }
+      }
+      
+      /* Melhorias para PWA */
+      @media (display-mode: standalone) {
+        body {
+          user-select: none;
+          -webkit-user-select: none;
+        }
+        
+        input, textarea {
+          user-select: text;
+          -webkit-user-select: text;
+        }
+      }
+      
+      /* Reduzir animações para usuários que preferem */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading screen -->
+    <div id="loading-screen">
+      <div class="loading-content">
+        <div class="loading-logo">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #000000;">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <div class="loading-text">Sistema Vitana</div>
+        <div class="loading-subtext">Carregando aplicação...</div>
+      </div>
+    </div>
+    
+    <div id="root"></div>
+    
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <script>
+      // Remover loading screen quando a aplicação carregar
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const loadingScreen = document.getElementById('loading-screen');
+          if (loadingScreen) {
+            loadingScreen.classList.add('fade-out');
+            setTimeout(function() {
+              loadingScreen.remove();
+            }, 300);
+          }
+        }, 500);
+      });
+      
+      // Registrar Service Worker para PWA (se disponível)
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+              console.log('SW registrado com sucesso:', registration.scope);
+            })
+            .catch(function(registrationError) {
+              console.log('Falha no registro do SW:', registrationError);
+            });
+        });
+      }
+      
+      // Prevenir zoom duplo toque no iOS
+      let lastTouchEnd = 0;
+      document.addEventListener('touchend', function (event) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+          event.preventDefault();
+        }
+        lastTouchEnd = now;
+      }, false);
+      
+      // Melhorar performance em dispositivos móveis
+      if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        document.documentElement.classList.add('mobile-device');
+      }
+    </script>
+  </body>
+</html>

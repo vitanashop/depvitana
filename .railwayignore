@@ -1,0 +1,14 @@
+node_modules
+.git
+.env.local
+.env.development
+*.log
+coverage
+.nyc_output
+dist
+build
+src/**/*.test.*
+src/**/*.spec.*
+.vscode
+.idea
+*.md
