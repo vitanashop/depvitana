@@ -13,7 +13,7 @@ COPY . .
 
 RUN npm run build
 
-# Executa init-db uma única vez durante a build
+# Executa init-db durante build
 RUN cd server && npm run init-db
 
 # Etapa de produção
@@ -36,5 +36,4 @@ USER nextjs
 
 EXPOSE 3000
 
-# ✅ Inicia o backend diretamente da pasta /server
 CMD ["npm", "start", "--prefix", "server"]
