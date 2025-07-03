@@ -1,4 +1,4 @@
-# Use Node.js 18 LTS
+# Etapa de build
 FROM node:18-alpine as builder
 
 WORKDIR /app
@@ -13,7 +13,10 @@ COPY . .
 
 RUN npm run build
 
-# Production stage
+# Executa init-db uma única vez durante a build
+RUN cd server && npm run init-db
+
+# Etapa de produção
 FROM node:18-alpine
 
 RUN npm install -g serve
@@ -31,7 +34,7 @@ RUN chown -R nextjs:nodejs /app
 
 USER nextjs
 
-# ✔️ Porta corrigida para 3000
 EXPOSE 3000
 
-CMD ["sh", "-c", "cd server && npm run init-db && npm start"]
+# ✅ Inicia o backend diretamente da pasta /server
+CMD ["npm", "start", "--prefix", "server"]
