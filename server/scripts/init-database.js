@@ -10,7 +10,6 @@ const initDatabase = async () => {
     // Criar tabelas
     console.log('📋 Criando tabelas...');
 
-    // Tabela de usuários e autenticação
     await database.run(`
       CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
@@ -27,7 +26,6 @@ const initDatabase = async () => {
       )
     `);
 
-    // Tabela de credenciais (senhas)
     await database.run(`
       CREATE TABLE IF NOT EXISTS user_credentials (
         id TEXT PRIMARY KEY,
@@ -42,7 +40,6 @@ const initDatabase = async () => {
       )
     `);
 
-    // Tabela de estabelecimentos
     await database.run(`
       CREATE TABLE IF NOT EXISTS businesses (
         id TEXT PRIMARY KEY,
@@ -57,7 +54,6 @@ const initDatabase = async () => {
       )
     `);
 
-    // Tabela de produtos
     await database.run(`
       CREATE TABLE IF NOT EXISTS products (
         id TEXT PRIMARY KEY,
@@ -77,7 +73,6 @@ const initDatabase = async () => {
       )
     `);
 
-    // Tabela de vendas
     await database.run(`
       CREATE TABLE IF NOT EXISTS sales (
         id TEXT PRIMARY KEY,
@@ -91,7 +86,6 @@ const initDatabase = async () => {
       )
     `);
 
-    // Tabela de itens de venda
     await database.run(`
       CREATE TABLE IF NOT EXISTS sale_items (
         id TEXT PRIMARY KEY,
@@ -106,7 +100,6 @@ const initDatabase = async () => {
       )
     `);
 
-    // Tabela de movimentações de estoque
     await database.run(`
       CREATE TABLE IF NOT EXISTS stock_movements (
         id TEXT PRIMARY KEY,
@@ -123,7 +116,6 @@ const initDatabase = async () => {
       )
     `);
 
-    // Tabela de NFCe
     await database.run(`
       CREATE TABLE IF NOT EXISTS nfce (
         id TEXT PRIMARY KEY,
@@ -145,7 +137,6 @@ const initDatabase = async () => {
       )
     `);
 
-    // Tabela de configurações
     await database.run(`
       CREATE TABLE IF NOT EXISTS settings (
         id TEXT PRIMARY KEY,
@@ -159,9 +150,8 @@ const initDatabase = async () => {
       )
     `);
 
-    // Criar índices para performance
+    // Índices
     console.log('🔍 Criando índices...');
-    
     await database.run('CREATE INDEX IF NOT EXISTS idx_users_email ON users (email)');
     await database.run('CREATE INDEX IF NOT EXISTS idx_users_status ON users (status)');
     await database.run('CREATE INDEX IF NOT EXISTS idx_credentials_user_id ON user_credentials (user_id)');
@@ -171,21 +161,17 @@ const initDatabase = async () => {
     await database.run('CREATE INDEX IF NOT EXISTS idx_sales_created_at ON sales (created_at)');
     await database.run('CREATE INDEX IF NOT EXISTS idx_stock_movements_product_id ON stock_movements (product_id)');
 
-    // Inserir dados iniciais
+    // Dados iniciais
     console.log('📦 Inserindo dados iniciais...');
-
-    // Verificar se já existe um estabelecimento padrão
     const existingBusiness = await database.get('SELECT id FROM businesses LIMIT 1');
     
     if (!existingBusiness) {
-      // Criar estabelecimento padrão
       const businessId = 'default-business';
       await database.run(`
         INSERT INTO businesses (id, name, subtitle, plan)
         VALUES (?, ?, ?, ?)
       `, [businessId, 'Sistema de Gestão', 'Depósito de Bebidas', 'free']);
 
-      // Inserir produtos iniciais
       const initialProducts = [
         {
           id: 'prod-1',
@@ -277,7 +263,7 @@ const initDatabase = async () => {
 };
 
 // Executar se chamado diretamente
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] === new URL(import.meta.url).pathname) {
   initDatabase().catch(console.error);
 }
 
