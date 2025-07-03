@@ -78,7 +78,11 @@ app.use('/api/stock', stockRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/nfce', nfceRoutes);
 
-// Health check
+// Health check para Railway
+app.get('/health', (req, res) => res.send('OK'));
+app.get('/saude', (req, res) => res.send('OK'));
+
+// Endpoint de saúde personalizada (com versão)
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
