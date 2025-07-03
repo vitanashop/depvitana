@@ -5,9 +5,10 @@ interface BarcodeScannerProps {
   isOpen: boolean;
   onClose: () => void;
   onScan: (barcode: string) => void;
+  title?: string; // ← agora o title é aceito (opcional)
 }
 
-export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps) {
+export function BarcodeScanner({ isOpen, onClose, onScan, title }: BarcodeScannerProps) {
   const [manualInput, setManualInput] = useState('');
   const [isScanning, setIsScanning] = useState(false);
   const [scanMode, setScanMode] = useState<'camera' | 'manual'>('manual');
@@ -34,13 +35,13 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
     try {
       setIsScanning(true);
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { 
+        video: {
           facingMode: 'environment',
           width: { ideal: 1280 },
           height: { ideal: 720 }
         }
       });
-      
+
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -62,16 +63,15 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
 
   const simulateBarcodeScan = () => {
     const mockBarcodes = [
-      '7894900011517', // Coca-Cola 2L
-      '7891991010924', // Skol Lata
-      '7891910000147', // Água Crystal
-      '7891991010931', // Guaraná Antarctica
-      '7891991010948'  // Brahma Long Neck
+      '7894900011517',
+      '7891991010924',
+      '7891910000147',
+      '7891991010931',
+      '7891991010948'
     ];
-    
+
     const randomBarcode = mockBarcodes[Math.floor(Math.random() * mockBarcodes.length)];
-    
-    // Simular delay de escaneamento
+
     scanTimeoutRef.current = window.setTimeout(() => {
       onScan(randomBarcode);
       onClose();
@@ -104,7 +104,9 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
       <div className="bg-gray-900 rounded-2xl border border-gray-700 w-full max-w-md max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-700">
-          <h3 className="text-xl font-bold text-white">Scanner de Código</h3>
+          <h3 className="text-xl font-bold text-white">
+            {title || 'Scanner de Código'}
+          </h3>
           <button
             onClick={handleClose}
             className="text-gray-400 hover:text-white transition-colors p-1"
@@ -153,7 +155,7 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
                   muted
                   className="w-full h-full object-cover"
                 />
-                
+
                 {/* Scanning overlay */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-64 h-32 border-2 border-yellow-500 rounded-lg relative">
@@ -161,7 +163,7 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
                     <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-yellow-500"></div>
                     <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-yellow-500"></div>
                     <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-yellow-500"></div>
-                    
+
                     {isScanning && (
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="w-full h-0.5 bg-yellow-500 animate-pulse"></div>
@@ -175,7 +177,7 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
                 <p className="text-gray-400 text-sm mb-4">
                   Posicione o código de barras dentro da área destacada
                 </p>
-                
+
                 <button
                   onClick={simulateBarcodeScan}
                   disabled={isScanning}
@@ -200,7 +202,7 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
                   autoFocus
                 />
               </div>
-              
+
               <button
                 type="submit"
                 disabled={!manualInput.trim()}
